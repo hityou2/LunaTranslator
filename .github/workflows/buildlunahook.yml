@@ -94,9 +94,8 @@ jobs:
           path: build 
       - name: List downloaded artifacts for debugging
         run: |
-          dir build /s /b # Windows 러너의 경우, 모든 파일과 디렉토리를 재귀적으로 나열합니다.
-          # 또는, `tree` 명령어를 사용할 수 있다면:
-          # tree build /F
+          # PowerShell에서 재귀적으로 모든 파일의 전체 경로를 나열합니다.
+          Get-ChildItem -Recurse -Path build | Select-Object -ExpandProperty FullName
       - run: python src/scripts/build_lunahook.py merge
       - uses: softprops/action-gh-release@v2
         with:
