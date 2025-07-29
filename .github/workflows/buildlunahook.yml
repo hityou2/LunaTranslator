@@ -25,19 +25,19 @@ jobs:
           New-Item -ItemType Directory -Force -Path src/cpp/LunaHook/builds/x86/Release
           Copy-Item -Path src/cpp/LunaHook/builds/Release_win7/* -Destination src/cpp/LunaHook/builds/x86/Release -Recurse -Force
 
-      - name: List files before winxp-x86-output upload
+      - name: List files before x86-release-output upload
         run: |
-          if (Test-Path -Path src/cpp/LunaHook/builds/x86) {
-              Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x86 | Select-Object -ExpandProperty FullName
+          if (Test-Path -Path src/cpp/LunaHook/builds/x86/Release) {
+              Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x86/Release | Select-Object -ExpandProperty FullName
           } else {
-              Write-Host "Directory src/cpp/LunaHook/builds/x86 does not exist after build and copy."
+              Write-Host "Directory src/cpp/LunaHook/builds/x86/Release does not exist after build and copy."
           }
 
       - uses: actions/upload-artifact@v4
         with:
-          # src/cpp/LunaHook/builds/x86 폴더 전체를 아티팩트로 업로드합니다.
-          name: x86-output
-          path: src/cpp/LunaHook/builds/x86 
+          # 'Release' 폴더 자체를 'x86-release-output' 이름으로 업로드합니다.
+          name: x86-release-output
+          path: src/cpp/LunaHook/builds/x86/Release 
   
   # build_plugin: (주석 처리된 부분은 그대로 둡니다)
   #   runs-on: windows-latest
@@ -103,38 +103,44 @@ jobs:
           New-Item -ItemType Directory -Force -Path src/cpp/LunaHook/builds/x64/Release
           Copy-Item -Path src/cpp/LunaHook/builds/Release_win7/* -Destination src/cpp/LunaHook/builds/x64/Release -Recurse -Force
 
-      - name: List files before x64-output upload
+      - name: List files before x64-release-output upload
         run: |
-          if (Test-Path -Path src/cpp/LunaHook/builds/x64) {
-              Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x64 | Select-Object -ExpandProperty FullName
+          if (Test-Path -Path src/cpp/LunaHook/builds/x64/Release) {
+              Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x64/Release | Select-Object -ExpandProperty FullName
           } else {
-              Write-Host "Directory src/cpp/LunaHook/builds/x64 does not exist after build and copy."
+              Write-Host "Directory src/cpp/LunaHook/builds/x64/Release does not exist after build and copy."
           }
 
       - uses: actions/upload-artifact@v4
         with:
-          # src/cpp/LunaHook/builds/x64 폴더 전체를 아티팩트로 업로드합니다.
-          name: x64-output 
-          path: src/cpp/LunaHook/builds/x64 
+          # 'Release' 폴더 자체를 'x64-release-output' 이름으로 업로드합니다.
+          name: x64-release-output 
+          path: src/cpp/LunaHook/builds/x64/Release 
   
   build:
     runs-on: windows-latest
     needs: [build_x,build_xp]
     steps:
       - uses: actions/checkout@v4
+      # build/64 및 build/x86 디렉토리를 미리 생성하여 다운로드 경로를 준비합니다.
+      - name: Create base build directories
+        run: |
+          New-Item -ItemType Directory -Force -Path build/64
+          New-Item -ItemType Directory -Force -Path build/x86
+
       - name: Download x64 artifact
         uses: actions/download-artifact@v4
         with:
-          # 'x64-output' 아티팩트(src/cpp/LunaHook/builds/x64 내용)를 'build/64'에 다운로드합니다.
+          # 'x64-release-output' 아티팩트(Release 폴더의 내용)를 'build/64'에 다운로드합니다.
           # 이렇게 하면 'build/64/Release' 경로가 생성됩니다.
-          name: x64-output 
+          name: x64-release-output 
           path: build/64 
       - name: Download x86 artifact
         uses: actions/download-artifact@v4
         with:
-          # 'x86-output' 아티팩트(src/cpp/LunaHook/builds/x86 내용)를 'build/x86'에 다운로드합니다.
+          # 'x86-release-output' 아티팩트(Release 폴더의 내용)를 'build/x86'에 다운로드합니다.
           # 이렇게 하면 'build/x86/Release' 경로가 생성됩니다.
-          name: x86-output 
+          name: x86-release-output 
           path: build/x86 
       - name: List downloaded artifacts for debugging
         run: |
