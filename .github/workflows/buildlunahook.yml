@@ -14,22 +14,29 @@ jobs:
       - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
         with:
           sdk-version: 26100
-      - name: Create x86 build directory
-        run: New-Item -ItemType Directory -Force -Path src/cpp/LunaHook/builds/x86
+      # x86 빌드 실행 (결과물은 src/cpp/LunaHook/builds/Release_win7에 생성됨)
       - run: python src/scripts/build_lunahook.py build x86 0 xp
       - run: python src/scripts/packlunahook.py
+
+      - name: Create x86 Release directory and Copy build outputs
+        run: |
+          # merge 스크립트가 예상하는 'build/x86/Release' 구조를 만들기 위해
+          # src/cpp/LunaHook/builds/x86/Release 디렉토리를 생성하고 빌드 결과물을 복사합니다.
+          New-Item -ItemType Directory -Force -Path src/cpp/LunaHook/builds/x86/Release
+          Copy-Item -Path src/cpp/LunaHook/builds/Release_win7/* -Destination src/cpp/LunaHook/builds/x86/Release -Recurse -Force
 
       - name: List files before winxp-x86-output upload
         run: |
           if (Test-Path -Path src/cpp/LunaHook/builds/x86) {
               Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x86 | Select-Object -ExpandProperty FullName
           } else {
-              Write-Host "Directory src/cpp/LunaHook/builds/x86 does not exist after build."
+              Write-Host "Directory src/cpp/LunaHook/builds/x86 does not exist after build and copy."
           }
 
       - uses: actions/upload-artifact@v4
         with:
-          name: winxp-x86-output 
+          # src/cpp/LunaHook/builds/x86 폴더 전체를 아티팩트로 업로드합니다.
+          name: x86-output
           path: src/cpp/LunaHook/builds/x86 
   
   # build_plugin: (주석 처리된 부분은 그대로 둡니다)
@@ -86,20 +93,27 @@ jobs:
       - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
         with:
           sdk-version: 26100
-      - name: Create x64 build directory
-        run: New-Item -ItemType Directory -Force -Path src/cpp/LunaHook/builds/x64
+      # x64 빌드 실행 (결과물은 src/cpp/LunaHook/builds/Release_win7에 생성됨)
       - run: python src/scripts/build_lunahook.py build x64 0 win7
+
+      - name: Create x64 Release directory and Copy build outputs
+        run: |
+          # merge 스크립트가 예상하는 'build/64/Release' 구조를 만들기 위해
+          # src/cpp/LunaHook/builds/x64/Release 디렉토리를 생성하고 빌드 결과물을 복사합니다.
+          New-Item -ItemType Directory -Force -Path src/cpp/LunaHook/builds/x64/Release
+          Copy-Item -Path src/cpp/LunaHook/builds/Release_win7/* -Destination src/cpp/LunaHook/builds/x64/Release -Recurse -Force
 
       - name: List files before x64-output upload
         run: |
           if (Test-Path -Path src/cpp/LunaHook/builds/x64) {
               Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x64 | Select-Object -ExpandProperty FullName
           } else {
-              Write-Host "Directory src/cpp/LunaHook/builds/x64 does not exist after build."
+              Write-Host "Directory src/cpp/LunaHook/builds/x64 does not exist after build and copy."
           }
 
       - uses: actions/upload-artifact@v4
         with:
+          # src/cpp/LunaHook/builds/x64 폴더 전체를 아티팩트로 업로드합니다.
           name: x64-output 
           path: src/cpp/LunaHook/builds/x64 
   
@@ -111,13 +125,17 @@ jobs:
       - name: Download x64 artifact
         uses: actions/download-artifact@v4
         with:
+          # 'x64-output' 아티팩트(src/cpp/LunaHook/builds/x64 내용)를 'build/64'에 다운로드합니다.
+          # 이렇게 하면 'build/64/Release' 경로가 생성됩니다.
           name: x64-output 
           path: build/64 
-      - name: Download winxp artifact
+      - name: Download x86 artifact
         uses: actions/download-artifact@v4
         with:
-          name: winxp-x86-output 
-          path: build/winxp 
+          # 'x86-output' 아티팩트(src/cpp/LunaHook/builds/x86 내용)를 'build/x86'에 다운로드합니다.
+          # 이렇게 하면 'build/x86/Release' 경로가 생성됩니다.
+          name: x86-output 
+          path: build/x86 
       - name: List downloaded artifacts for debugging
         run: |
           Get-ChildItem -Recurse -Path build | Select-Object -ExpandProperty FullName
@@ -125,6 +143,8 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: LunaHook
+          # 최종 빌드 결과물이 어디에 저장되는지에 따라 이 경로를 확인해야 합니다.
+          # merge 스크립트가 src/cpp/LunaHook/builds에 저장한다고 가정합니다.
           files: src/cpp/LunaHook/builds/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
