@@ -81,9 +81,6 @@ jobs:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build_x:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        bits: [64]
     permissions:
       id-token: write
       attestations: write
@@ -127,15 +124,21 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: x64-release-output 
-          path: build/64/Release # <-- 이 경로를 'build/64/Release'로 변경합니다.
+          path: build/64/Release 
       - name: Download x86 artifact
         uses: actions/download-artifact@v4
         with:
           name: x86-release-output 
-          path: build/x86/Release # <-- 이 경로를 'build/x86/Release'로 변경합니다.
-      - name: List downloaded artifacts for debugging
+          path: build/x86/Release 
+      
+      - name: List downloaded artifacts for debugging (PowerShell)
         run: |
           Get-ChildItem -Recurse -Path build | Select-Object -ExpandProperty FullName
+
+      - name: Verify paths before merge script (Python)
+        run: |
+          python -c "import os; print(f'Current working directory (Python): {os.getcwd()}'); print(f'Path exists (build/64/Release): {os.path.exists(os.path.join(os.getcwd(), \'build/64/Release\'))}'); print(f'Is directory (build/64/Release): {os.path.isdir(os.path.join(os.getcwd(), \'build/64/Release\'))}'); print(f'Path exists (build/x86/Release): {os.path.exists(os.path.join(os.getcwd(), \'build/x86/Release\'))}'); print(f'Is directory (build/x86/Release): {os.path.isdir(os.path.join(os.getcwd(), \'build/x86/Release\'))}')"
+      
       - run: python src/scripts/build_lunahook.py merge
       - uses: softprops/action-gh-release@v2
         with:
