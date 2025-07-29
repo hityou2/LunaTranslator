@@ -122,11 +122,8 @@ jobs:
     needs: [build_x,build_xp]
     steps:
       - uses: actions/checkout@v4
-      # build/64 및 build/x86 디렉토리를 미리 생성하여 다운로드 경로를 준비합니다.
-      - name: Create base build directories
-        run: |
-          New-Item -ItemType Directory -Force -Path build/64
-          New-Item -ItemType Directory -Force -Path build/x86
+      # 기존 'Create base build directories' 단계는 필요 없습니다.
+      # download-artifact가 경로를 자동으로 생성합니다.
 
       - name: Download x64 artifact
         uses: actions/download-artifact@v4
