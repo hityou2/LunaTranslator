@@ -92,6 +92,11 @@ jobs:
         with:
           # 아티팩트 다운로드 경로를 'build'로 변경하여 스크립트가 예상하는 위치와 일치시킵니다.
           path: build 
+      - name: List downloaded artifacts for debugging
+        run: |
+          dir build /s /b # Windows 러너의 경우, 모든 파일과 디렉토리를 재귀적으로 나열합니다.
+          # 또는, `tree` 명령어를 사용할 수 있다면:
+          # tree build /F
       - run: python src/scripts/build_lunahook.py merge
       - uses: softprops/action-gh-release@v2
         with:
