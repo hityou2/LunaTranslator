@@ -122,23 +122,17 @@ jobs:
     needs: [build_x,build_xp]
     steps:
       - uses: actions/checkout@v4
-      # 기존 'Create base build directories' 단계는 필요 없습니다.
-      # download-artifact가 경로를 자동으로 생성합니다.
-
+      # 'build/64/Release' 및 'build/x86/Release' 경로를 직접 지정하여 다운로드합니다.
       - name: Download x64 artifact
         uses: actions/download-artifact@v4
         with:
-          # 'x64-release-output' 아티팩트(Release 폴더의 내용)를 'build/64'에 다운로드합니다.
-          # 이렇게 하면 'build/64/Release' 경로가 생성됩니다.
           name: x64-release-output 
-          path: build/64 
+          path: build/64/Release # <-- 이 경로를 'build/64/Release'로 변경합니다.
       - name: Download x86 artifact
         uses: actions/download-artifact@v4
         with:
-          # 'x86-release-output' 아티팩트(Release 폴더의 내용)를 'build/x86'에 다운로드합니다.
-          # 이렇게 하면 'build/x86/Release' 경로가 생성됩니다.
           name: x86-release-output 
-          path: build/x86 
+          path: build/x86/Release # <-- 이 경로를 'build/x86/Release'로 변경합니다.
       - name: List downloaded artifacts for debugging
         run: |
           Get-ChildItem -Recurse -Path build | Select-Object -ExpandProperty FullName
