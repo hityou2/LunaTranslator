@@ -137,7 +137,8 @@ jobs:
 
       - name: Verify paths before merge script (Python)
         run: |
-          python -c "import os; print(f'Current working directory (Python): {os.getcwd()}'); print(f'Path exists (build/64/Release): {os.path.exists(os.path.join(os.getcwd(), \'build/64/Release\'))}'); print(f'Is directory (build/64/Release): {os.path.isdir(os.path.join(os.getcwd(), \'build/64/Release\'))}'); print(f'Path exists (build/x86/Release): {os.path.exists(os.path.join(os.getcwd(), \'build/x86/Release\'))}'); print(f'Is directory (build/x86/Release): {os.path.isdir(os.path.join(os.getcwd(), \'build/x86/Release\'))}')"
+          # Python f-string 내에서 백슬래시 문제를 피하기 위해 따옴표를 조정합니다.
+          python -c "import os; print(f'Current working directory (Python): {os.getcwd()}'); print(f'Path exists (build/64/Release): {os.path.exists(os.path.join(os.getcwd(), \"build/64/Release\"))}'); print(f'Is directory (build/64/Release): {os.path.isdir(os.path.join(os.getcwd(), \"build/64/Release\"))}'); print(f'Path exists (build/x86/Release): {os.path.exists(os.path.join(os.getcwd(), \"build/x86/Release\"))}'); print(f'Is directory (build/x86/Release): {os.path.isdir(os.path.join(os.getcwd(), \"build/x86/Release\'))}')"
       
       - run: python src/scripts/build_lunahook.py merge
       - uses: softprops/action-gh-release@v2
