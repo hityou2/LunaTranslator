@@ -14,16 +14,17 @@ jobs:
       - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
         with:
           sdk-version: 26100
+      - name: Create x86 build directory
+        run: New-Item -ItemType Directory -Force -Path src/cpp/LunaHook/builds/x86
       - run: python src/scripts/build_lunahook.py build x86 0 xp
       - run: python src/scripts/packlunahook.py
 
       - name: List files before winxp-x86-output upload
         run: |
-          # Check if the directory exists and list its contents
           if (Test-Path -Path src/cpp/LunaHook/builds/x86) {
               Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x86 | Select-Object -ExpandProperty FullName
           } else {
-              Write-Host "Directory src/cpp/LunaHook/builds/x86 does not exist."
+              Write-Host "Directory src/cpp/LunaHook/builds/x86 does not exist after build."
           }
 
       - uses: actions/upload-artifact@v4
@@ -85,15 +86,16 @@ jobs:
       - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
         with:
           sdk-version: 26100
+      - name: Create x64 build directory
+        run: New-Item -ItemType Directory -Force -Path src/cpp/LunaHook/builds/x64
       - run: python src/scripts/build_lunahook.py build x64 0 win7
 
       - name: List files before x64-output upload
         run: |
-          # Check if the directory exists and list its contents
           if (Test-Path -Path src/cpp/LunaHook/builds/x64) {
               Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x64 | Select-Object -ExpandProperty FullName
           } else {
-              Write-Host "Directory src/cpp/LunaHook/builds/x64 does not exist."
+              Write-Host "Directory src/cpp/LunaHook/builds/x64 does not exist after build."
           }
 
       - uses: actions/upload-artifact@v4
