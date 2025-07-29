@@ -17,10 +17,17 @@ jobs:
       - run: python src/scripts/build_lunahook.py build x86 0 xp
       - run: python src/scripts/packlunahook.py
 
+      - name: List files before winxp-x86-output upload
+        run: |
+          # Check if the directory exists and list its contents
+          if (Test-Path -Path src/cpp/LunaHook/builds/x86) {
+              Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x86 | Select-Object -ExpandProperty FullName
+          } else {
+              Write-Host "Directory src/cpp/LunaHook/builds/x86 does not exist."
+          }
+
       - uses: actions/upload-artifact@v4
         with:
-          # winxp 빌드 결과물 중 'x86' 폴더만 업로드합니다.
-          # build_lunahook.py build x86 0 xp 명령어가 src/cpp/LunaHook/builds/x86/Release를 생성한다고 가정합니다.
           name: winxp-x86-output 
           path: src/cpp/LunaHook/builds/x86 
   
@@ -80,10 +87,17 @@ jobs:
           sdk-version: 26100
       - run: python src/scripts/build_lunahook.py build x64 0 win7
 
+      - name: List files before x64-output upload
+        run: |
+          # Check if the directory exists and list its contents
+          if (Test-Path -Path src/cpp/LunaHook/builds/x64) {
+              Get-ChildItem -Recurse -Path src/cpp/LunaHook/builds/x64 | Select-Object -ExpandProperty FullName
+          } else {
+              Write-Host "Directory src/cpp/LunaHook/builds/x64 does not exist."
+          }
+
       - uses: actions/upload-artifact@v4
         with:
-          # x64 빌드 결과물 중 'x64' 폴더만 업로드합니다.
-          # build_lunahook.py build x64 0 win7 명령어가 src/cpp/LunaHook/builds/x64/Release를 생성한다고 가정합니다.
           name: x64-output 
           path: src/cpp/LunaHook/builds/x64 
   
@@ -95,13 +109,11 @@ jobs:
       - name: Download x64 artifact
         uses: actions/download-artifact@v4
         with:
-          # x64 아티팩트를 'build/64' 경로에 다운로드하여 'build/64/Release'를 만듭니다.
           name: x64-output 
           path: build/64 
       - name: Download winxp artifact
         uses: actions/download-artifact@v4
         with:
-          # winxp 아티팩트를 'build/winxp' 경로에 다운로드하여 'build/winxp/Release'를 만듭니다.
           name: winxp-x86-output 
           path: build/winxp 
       - name: List downloaded artifacts for debugging
@@ -111,8 +123,6 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: LunaHook
-          # 'build_lunahook.py merge' 스크립트가 최종 결과물을 어디에 두는지에 따라 이 'files' 경로를 확인해야 합니다.
-          # 만약 병합된 결과물이 여전히 'src/cpp/LunaHook/builds'에 저장된다면 이 경로는 그대로 유지됩니다.
           files: src/cpp/LunaHook/builds/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
