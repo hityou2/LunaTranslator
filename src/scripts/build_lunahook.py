@@ -7,31 +7,32 @@ if not rootDir:
 rootDir = os.path.abspath(os.path.join(rootDir, "../cpp/LunaHook"))
 
 if len(sys.argv) and sys.argv[1] == "merge":
-    # os.chdir(rootDir) # <--- 이 줄을 제거하거나 주석 처리합니다.
-    # 워크플로의 'run' 명령은 이미 리포지토리 루트에서 실행되므로,
-    # 스크립트가 리포지토리 루트를 기준으로 경로를 찾도록 합니다.
+    # 'merge' 명령의 경우, 스크립트의 현재 작업 디렉토리는 리포지토리 루트입니다.
+    # 따라서 os.chdir(rootDir)는 제거합니다.
+    # os.mkdir("../build")도 download-artifact에 의해 이미 생성되므로 제거합니다.
+    
+    # 최종 결과물이 저장될 'builds' 디렉토리를 rootDir 내부에 생성합니다.
+    # 예: D:\a\LunaTranslator\LunaTranslator\src\cpp\LunaHook\builds
+    os.makedirs(os.path.join(rootDir, "builds", "Release"), exist_ok=True)
 
-    # build 디렉토리가 이미 워크플로의 download-artifact 단계에서 생성되므로
-    # 이 부분도 필요 없을 수 있지만, 안전을 위해 dirs_exist_ok=True와 함께 유지합니다.
-    # os.mkdir("../build") # 이 줄도 필요 없을 수 있습니다.
-    # os.mkdir("builds") # 이 줄은 builds/Release.zip을 위해 필요할 수 있습니다.
-
-    # shutil.copytree의 원본 경로를 리포지토리 루트 기준으로 수정합니다.
-    # rootDir가 src/cpp/LunaHook이므로, build 폴더는 rootDir의 상위 2단계에 있습니다.
+    # shutil.copytree의 원본 경로는 리포지토리 루트 기준의 상대 경로로 직접 지정합니다.
+    # 대상 경로는 rootDir 내의 'builds/Release' 하위 폴더로 명확히 지정합니다.
     shutil.copytree(
-        os.path.abspath(os.path.join(rootDir, "../../build/64/Release")), # <--- 경로 수정
-        os.path.abspath(os.path.join(rootDir, "builds/Release/64")), # <--- 대상 경로도 명확히
+        "build/64/Release", # 리포지토리 루트 기준: D:\a\LunaTranslator\LunaTranslator\build\64\Release
+        os.path.abspath(os.path.join(rootDir, "builds/Release/64")), # 대상: D:\a\LunaTranslator\LunaTranslator\src\cpp\LunaHook\builds\Release\64
         dirs_exist_ok=True,
     )
     shutil.copytree(
-        os.path.abspath(os.path.join(rootDir, "../../build/x86/Release")), # <--- 경로 수정 (winxp는 x86으로 다운로드됨)
-        os.path.abspath(os.path.join(rootDir, "builds/Release/x86")), # <--- 대상 경로도 명확히
+        "build/x86/Release", # 리포지토리 루트 기준: D:\a\LunaTranslator\LunaTranslator\build\x86\Release
+        os.path.abspath(os.path.join(rootDir, "builds/Release/x86")), # 대상: D:\a\LunaTranslator\LunaTranslator\src\cpp\LunaHook\builds\Release\x86
         dirs_exist_ok=True,
     )
 
-    # 최종 결과물은 builds/Release 폴더에 있을 것이므로, targetdir을 조정합니다.
+    # 최종 ZIP 파일의 대상 디렉토리와 파일명을 조정합니다.
+    # ZIP에 포함될 내용의 루트는 rootDir 내의 'builds/Release'입니다.
     targetdir = os.path.abspath(os.path.join(rootDir, "builds/Release"))
-    target = os.path.abspath(os.path.join(rootDir, "builds/Release.zip")) # builds 폴더는 rootDir 안에 있습니다.
+    target = os.path.abspath(os.path.join(rootDir, "builds/Release.zip"))
+    
     os.system(
         rf'"C:\Program Files\7-Zip\7z.exe" a -m0=Deflate -mx9 {target} {targetdir}'
     )
