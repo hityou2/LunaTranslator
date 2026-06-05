@@ -267,7 +267,9 @@ LunaHost::LunaHost()
         [=](HOSTINFO type, const std::wstring &output)
         { on_info(type, output); },
         {},
-        {});
+        {},
+        {},  // 9번째 허위 데이터 (i18nQueryCallback)
+        {}); // 10번째 허위 데이터 (emuGameInfoCallback)
 
     mainlayout = new gridlayout();
     mainlayout->addcontrol(g_selectprocessbutton, 0, 0);
