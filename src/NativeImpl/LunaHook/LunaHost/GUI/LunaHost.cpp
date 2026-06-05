@@ -651,3 +651,10 @@ Pluginwindow::Pluginwindow(mainwindow *p, Pluginmanager *pl) : mainwindow(p), pl
     settext(TR[TPlugins]);
     setcentral(500, 400);
 }
+
+// --- 링커(Linker) 우회를 위한 더미 데이터 ---
+const wchar_t* langhelper::operator[](LANG_STRINGS_UI) {
+    return L"?"; // UI 글자를 요구하면 무조건 물음표(?)를 던져줍니다.
+}
+
+std::vector<std::tuple<SUPPORT_LANG, std::wstring, std::vector<std::string>>> lang_map;
