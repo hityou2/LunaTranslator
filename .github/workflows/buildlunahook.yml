@@ -16,13 +16,11 @@ jobs:
           sdk-version: 26100
       - run: python src/scripts/build_lunahook.py build x86 0 xp
       - run: python src/scripts/packlunahook.py
-
+      - run: Get-ChildItem -Path src/NativeImpl/LunaHook/build -Filter *.exe -Recurse | Copy-Item -Destination src/NativeImpl/LunaHook/builds/Release_win10
       - uses: actions/upload-artifact@v4
         with:
           name: winxp
-          path: |
-            src/NativeImpl/LunaHook/builds
-            src/NativeImpl/LunaHook/build/**/*.exe
+          path: src/NativeImpl/LunaHook/builds
   
   # build_plugin:
   #   runs-on: windows-2022
@@ -79,13 +77,11 @@ jobs:
         with:
           sdk-version: 26100
       - run: python src/scripts/build_lunahook.py build x64 0 win7
-
+      - run: Get-ChildItem -Path src/NativeImpl/LunaHook/build -Filter *.exe -Recurse | Copy-Item -Destination src/NativeImpl/LunaHook/builds/Release_win10
       - uses: actions/upload-artifact@v4
         with:
           name: ${{matrix.bits}}
-          path: |
-            src/NativeImpl/LunaHook/builds
-            src/NativeImpl/LunaHook/build/**/*.exe
+          path: src/NativeImpl/LunaHook/builds
   
   build:
     runs-on: windows-2022
