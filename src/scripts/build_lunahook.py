@@ -17,7 +17,7 @@ if len(sys.argv) and sys.argv[1] == "merge":
         dirs_exist_ok=True,
     )
     shutil.copytree(
-        f"build/xp/Release_win10",
+        f"build/winxp/Release_win10",
         f"../build/Release",
         dirs_exist_ok=True,
     )
