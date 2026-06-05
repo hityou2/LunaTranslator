@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <queue>
 #include "pluginmanager.h"
-#include #include "../../NativeUtils/vad/lockedqueue.hpp"
+#include "../../NativeUtils/vad/lockedqueue.hpp"
 #ifndef _WIN64
 #define THISCALL __thiscall
 #define _CDECL __cdecl
