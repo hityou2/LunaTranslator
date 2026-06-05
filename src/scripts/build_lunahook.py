@@ -12,12 +12,12 @@ if len(sys.argv) and sys.argv[1] == "merge":
     os.mkdir("builds")
 
     shutil.copytree(
-        f"src/NativeImpl/LunaHook/builds/Release_win10",
+        f"build/64/Release_win10",
         f"../build/Release",
         dirs_exist_ok=True,
     )
     shutil.copytree(
-        f"src/NativeImpl/LunaHook/builds/Release_xp",
+        f"build/xp/Release_win10",
         f"../build/Release",
         dirs_exist_ok=True,
     )
