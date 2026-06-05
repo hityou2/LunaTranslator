@@ -68,6 +68,7 @@ include_directories(include)
 include(${CMAKE_SOURCE_DIR}/../version.cmake)
 
 add_subdirectory(include)
+add_subdirectory(Lang)
 if(BUILD_HOST)
   add_subdirectory(LunaHost)
 endif()
