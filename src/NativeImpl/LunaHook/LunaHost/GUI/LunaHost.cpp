@@ -62,7 +62,7 @@ void LunaHost::savesettings()
     configs->set("fontsize", uifont.fontsize);
     configs->set("font_italic", uifont.italic);
     configs->set("font_bold", uifont.bold);
-    configs->set("Language", map_from_support_lang(curr_lang));
+    //configs->set("Language", map_from_support_lang(curr_lang));
 }
 
 std::string getdefaultlang()
@@ -79,7 +79,7 @@ std::string getdefaultlang()
 }
 void LunaHost::loadsettings()
 {
-    curr_lang = map_to_support_lang(configs->get("Language", getdefaultlang()).c_str());
+    //curr_lang = map_to_support_lang(configs->get("Language", getdefaultlang()).c_str());
     uifont.italic = configs->get("font_italic", false);
     uifont.bold = configs->get("font_bold", false);
     uifont.fontsize = configs->get("fontsize", 14);
@@ -534,10 +534,10 @@ Settingwindow::Settingwindow(LunaHost *host) : mainwindow(host)
     {
         language->additem(l);
     }
-    language->setcurrent(curr_lang);
+    //language->setcurrent(curr_lang);
     language->oncurrentchange = [](int idx)
     {
-        curr_lang = (decltype(curr_lang))idx;
+        //curr_lang = (decltype(curr_lang))idx;
     };
     mainlayout = new gridlayout();
     mainlayout->addcontrol(new label(this, TR[LblLanguage]), 0, 0);
