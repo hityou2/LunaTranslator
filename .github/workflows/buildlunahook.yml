@@ -23,7 +23,7 @@ jobs:
           path: src/cpp/LunaHook/builds
   
   # build_plugin:
-  #   runs-on: windows-latest
+  #   runs-on: windows-2022
   #   strategy:
   #     matrix:
   #       include:
@@ -63,7 +63,7 @@ jobs:
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build_x:
-    runs-on: windows-latest
+    runs-on: windows-2022
     strategy:
       matrix:
         bits: [64]
@@ -84,7 +84,7 @@ jobs:
           path: src/cpp/LunaHook/builds
   
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     needs: [build_x,build_xp]
     steps:
       - uses: actions/checkout@v4
